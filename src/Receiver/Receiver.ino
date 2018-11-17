@@ -21,6 +21,8 @@ int ch1_value = 0;
 unsigned long last_Time = 0;
 Received_data received_data;
 
+unsigned long received_time = 0;
+
 void setup() {
   
   pinMode(Ain1, OUTPUT);  //Ain1
@@ -43,37 +45,61 @@ void receive_the_data()
   {
     while ( radio.available() ) {
     radio.read(&received_data, sizeof(Received_data));
-    last_Time = millis(); 
   }
 }
 
 void loop() {
 
+delay(10);
   receive_the_data();  
   ch1_value = received_data.ch1;// map(received_data.ch1,0,255,1000,2000);
-  Serial.println(ch1_value);
 
-  if (ch1_value == 1) {
-    digitalWrite(Ain1,HIGH);
-    digitalWrite(Ain2,LOW);
-    digitalWrite(Bin1,LOW);
-    digitalWrite(Bin2,LOW);
-  }else if (ch1_value ==2) {
-    digitalWrite(Ain1,LOW);
-    digitalWrite(Ain2,LOW);
-    digitalWrite(Bin1,HIGH);
-    digitalWrite(Bin2,LOW);
-  }else if (ch1_value ==3) {
-    digitalWrite(Ain1,HIGH);
-    digitalWrite(Ain2,LOW);
-    digitalWrite(Bin1,HIGH);
-    digitalWrite(Bin2,LOW);
-  }else {
-    digitalWrite(Ain1,LOW);
-    digitalWrite(Ain2,LOW);
-    digitalWrite(Bin1,LOW);
-    digitalWrite(Bin2,LOW);
-    Serial.print("both off");
+  //Serial.println(ch1_value);
+
+  if (ch1_value >= 0 && ch1_value <= 6) {
+   
+    if (ch1_value == 1) {   
+      // Left forward         
+      digitalWrite(Ain1,HIGH);
+      digitalWrite(Ain2,LOW);
+      digitalWrite(Bin1,LOW);
+      digitalWrite(Bin2,LOW);
+    } else if (ch1_value == 2) {
+      // Right forward
+      digitalWrite(Ain1,LOW);
+      digitalWrite(Ain2,LOW);
+      digitalWrite(Bin1,HIGH);
+      digitalWrite(Bin2,LOW);
+    } else if (ch1_value == 3) {
+      // Both forward
+      digitalWrite(Ain1,HIGH);
+      digitalWrite(Ain2,LOW);
+      digitalWrite(Bin1,HIGH);
+      digitalWrite(Bin2,LOW);
+    } else if (ch1_value == 4) {
+      // Left backwards
+      digitalWrite(Ain1,LOW);
+      digitalWrite(Ain2,HIGH);
+      digitalWrite(Bin1,LOW);
+      digitalWrite(Bin2,LOW);
+    } else if (ch1_value == 5) {
+      // Right backwards
+      digitalWrite(Ain1,LOW);
+      digitalWrite(Ain2,LOW);
+      digitalWrite(Bin1,LOW);
+      digitalWrite(Bin2,HIGH);
+    } else if (ch1_value == 6) {
+      // Both backwards
+      digitalWrite(Ain1,LOW);
+      digitalWrite(Ain2,HIGH);
+      digitalWrite(Bin1,LOW);
+      digitalWrite(Bin2,HIGH);
+    } else {
+      // Both off
+      digitalWrite(Ain1,LOW);
+      digitalWrite(Ain2,LOW);
+      digitalWrite(Bin1,LOW);
+      digitalWrite(Bin2,LOW);      
+    }
   }
-  
 }
