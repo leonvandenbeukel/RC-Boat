@@ -17,46 +17,36 @@ struct Received_data {
   byte ch1;
 };
 
-int ch1_value = 0;
-unsigned long last_Time = 0;
 Received_data received_data;
 
-unsigned long received_time = 0;
-
 void setup() {
+
+  Serial.begin(9600);
   
   pinMode(Ain1, OUTPUT);  //Ain1
   pinMode(Ain2, OUTPUT);  //Ain2
   pinMode(Bin1, OUTPUT);  //Bin1
   pinMode(Bin2, OUTPUT);  //Bin2
-
-  Serial.begin(9600);
-
+  
   received_data.ch1 = 0;
   radio.begin();
+  //radio.setPALevel(RF24_PA_LOW);
   radio.setAutoAck(false);
   radio.setDataRate(RF24_250KBPS);  
   radio.openReadingPipe(1,pipeIn);
   radio.startListening();
-
-}
-
-void receive_the_data()
-  {
-    while ( radio.available() ) {
-    radio.read(&received_data, sizeof(Received_data));
-  }
 }
 
 void loop() {
 
-delay(10);
-  receive_the_data();  
-  ch1_value = received_data.ch1;// map(received_data.ch1,0,255,1000,2000);
-
-  //Serial.println(ch1_value);
+  if (radio.available()) 
+    radio.read(&received_data, sizeof(Received_data));
+ 
+  int ch1_value = received_data.ch1;  
 
   if (ch1_value >= 0 && ch1_value <= 6) {
+    if (ch1_value != 0)
+      Serial.println(ch1_value);
    
     if (ch1_value == 1) {   
       // Left forward         
@@ -99,7 +89,7 @@ delay(10);
       digitalWrite(Ain1,LOW);
       digitalWrite(Ain2,LOW);
       digitalWrite(Bin1,LOW);
-      digitalWrite(Bin2,LOW);      
-    }
+      digitalWrite(Bin2,LOW); 
+    }       
   }
 }
